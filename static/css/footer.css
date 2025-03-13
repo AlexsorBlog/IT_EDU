@@ -1,0 +1,19 @@
+.page-footer .container {
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 12px;
+}
+
+.footer-text {
+  flex-basis: 150px;
+}
+
+.copyright {
+  text-transform: uppercase;
+}
+
+.copyright li {
+  margin-top: 5px;
+  text-align: right;
+}

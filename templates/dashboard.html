@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Google Classroom Dashboard</title>
+</head>
+<body>
+    <h1>Твої класи і завдання</h1>
+    {% for course in classes %}
+        <h2>{{ course.name }}</h2>
+        <ul>
+        {% for task in course.assignments %}
+            <li>{{ task.title }} {% if task.due %} (Due: {{ task.due | safe }}) {% endif %}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    <a href="/">⬅ Повернутись до AI-помічника</a>
+</body>
+</html>

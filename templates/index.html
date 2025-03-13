@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduBuddy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="container">
+        <a href="/">EduBuddy</a>
+        {% if logged_in %}
+          <a href="{{ url_for('logout') }}" class="logout-btn">Вийти</a>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="login-btn">Увійти через Google</a>
+        {% endif %}
+      </div>
+    </header>
+
+    <div class="page-layout">
+      <!-- Tasks Section (Left Side) -->
+      {% if logged_in and tasks %}
+      <aside class="tasks-sidebar">
+        <h2>Поточні завдання</h2>
+        <table class="tasks-table">
+          <thead>
+            <tr>
+              <th>Курс</th>
+              <th>Завдання</th>
+              <th>Дата</th>
+              <th>Статус</th>
+              <th>Дії</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for task in tasks %}
+            <tr>
+              <td>{{ task.course }}</td>
+              <td>{{ task.title }}</td>
+              <td>{{ task.due }}</td>
+              <td>{{ task.state }}</td>
+              <td>
+                <form method="post" action="{{ url_for('complete_task', task_index=loop.index0) }}" style="display:inline;">
+                  <button type="submit" class="action-btn complete-btn" {% if task.state == 'Виконано' %}disabled{% endif %}>✓</button>
+                </form>
+                <form method="post" action="{{ url_for('remove_task', task_index=loop.index0) }}" style="display:inline;">
+                  <button type="submit" class="action-btn remove-btn">✗</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </aside>
+      {% endif %}
+
+      <!-- Main Content -->
+      <main class="main-content">
+        {% if not started_chat %}
+        <section class="dialog">
+          <div class="container">
+            <div class="dialog-wrapper" id="chat-container">
+              <div class="centered-answer">
+                <div class="start-form">
+                  <p class="answer">Пройди коротке опитування, щоб ми краще розуміли, як тобі допомагати 👇</p>
+                  <form method="post" class="survey-form" id="survey-form">
+                    <label for="topic">Що ти хочеш вивчити?</label>
+                    <input type="text" name="topic" required value="{{ topic or '' }}" placeholder="Наприклад: Теорія ймовірностей" />
+                    <label for="level">Оціни свій рівень знань:</label>
+                    <select name="level">
+                      <option value="початківець" {% if level == 'початківець' %}selected{% endif %}>Початківець</option>
+                      <option value="середній" {% if level == 'середній' %}selected{% endif %}>Середній</option>
+                      <option value="просунутий" {% if level == 'просунутий' %}selected{% endif %}>Просунутий</option>
+                    </select>
+                    <button type="submit">Почати спілкування</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        {% else %}
+        <section class="dialog">
+          <div class="container">
+            <div class="dialog-wrapper" id="chat-container">
+              {% for msg in chat_history %}
+                {% if msg.role == "assistant" %}
+                  <div class="answer-wrapper assistant">
+                    <div class="description">{{ msg.content | markdown | safe }}</div>
+                  </div>
+                {% elif msg.role == "user" %}
+                  <div class="answer-wrapper user">
+                    <div class="description">{{ msg.content | e }}</div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+              <form class="chat-form" method="post" id="chat-form">
+                <input name="chat" value="1" type="hidden" />
+                <input class="q-input" type="text" name="question" placeholder="Напиши запитання..." required />
+                <button type="submit">
+                  <svg class="icon-arrow-up" width="40" height="40">
+                    <use href="{{ url_for('static', filename='images/icons.svg') }}#icon-arrow-up"></use>
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+        {% endif %}
+      </main>
+    </div>
+
+    <!-- Overlay for Loading -->
+    <div class="overlay" id="overlay">
+      <div class="loader"></div>
+    </div>
+
+    <footer class="page-footer">
+      <div class="container">
+        <p>Hackathon project <span class="bolded">EduBuddy</span></p>
+      </div>
+    </footer>
+  </body>
+</html>

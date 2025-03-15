@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Проект EdduBuddy для автоматизації навчання" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>EdduBuddy</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+
+      <script>
+        // Данні поточної сторінки
+        var mkdocs_page_name = "Головна";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script>
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> EdduBuddy
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Пошук документації" aria-label="Пошук документації" title="Введіть пошуковий запит тут" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Навігаційне меню">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Головна</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#commands">Команди</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#project-layout">Структура проекту</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="about/">Про нас</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Мобільне навігаційне меню">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">EdduBuddy</a>
+
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="Навігація хлібних крихт">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Документація"></a></li>
+      <li class="breadcrumb-item active">Головна</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+
+                <h1 id="welcome-to-mkdocs">Ласкаво просимо до EdduBuddy</h1>
+<p>Проект EdduBuddy створено для автоматизації навчальних процесів через інтерактивного чат-бота. Цей інструмент допомагає студентам задавати питання та отримувати відповіді на основі заданих матеріалів.</p>
+<h2 id="commands">Команди</h2>
+<ul>
+<li><code>start</code> - Почати нове навчання з ботом.</li>
+<li><code>ask [питання]</code> - Задати питання чат-боту.</li>
+<li><code>material [тема]</code> - Отримати матеріали по певній темі.</li>
+<li><code>exit</code> - Завершити сесію з чат-ботом.</li>
+</ul>
+<h2 id="project-layout">Структура проекту</h2>
+<pre><code>eddubuddy.py    # Основний скрипт для запуску чат-бота.
+docs/
+    index.md  # Головна сторінка документації.
+    materials/ # Каталог з навчальними матеріалами.
+    bot/       # Файли для роботи чат-бота.
+</code></pre>
+
+<h2 id="usage">Як користуватися</h2>
+<p>Щоб почати використовувати EdduBuddy, спочатку потрібно запустити основний скрипт <code>eddubuddy.py</code> на вашому сервері. Після цього бот стане доступним для спілкування.</p>
+
+<h2 id="project-setup">Налаштування проекту</h2>
+<p>Щоб налаштувати проект, вам потрібно встановити необхідні бібліотеки за допомогою pip:</p>
+<pre><code>pip install -r requirements.txt</code></pre>
+<p>Після цього ви зможете запустити бота за допомогою команди:</p>
+<pre><code>python eddubuddy.py</code></pre>
+
+<h2 id="support">Підтримка</h2>
+<p>Якщо у вас виникли проблеми, звертайтесь до нашої підтримки на <a href="mailto:support@eddubuddy.com">support@eddubuddy.com</a>.</p>
+
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Навігація футера">
+        <a href="about/" class="btn btn-neutral float-right" title="Про нас">Далі <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Авторські права тощо -->
+  </div>
+
+  Створено за допомогою <a href="https://www.mkdocs.org/">MkDocs</a> з темою від <a href="https://github.com/readthedocs/sphinx_rtd_theme">Sphinx RTD Theme</a>, наданою <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Версії">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+
+
+
+      <span><a href="about/" style="color: #fcfcfc">Далі &raquo;</a></span>
+
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+Версія MkDocs : 1.6.1
+Дата побудови UTC : 2025-03-15 14:14:36.770726+00:00
+-->

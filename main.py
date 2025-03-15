@@ -24,8 +24,8 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # Replace with a secure key
 
-# OpenAI API Key
-openai.api_key = "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"
+with open("openai_key.txt", "r") as file:
+    openai.api_key = file.readline()
 
 # Google API Configuration
 CLIENT_SECRETS_FILE = "credentials_google.json"

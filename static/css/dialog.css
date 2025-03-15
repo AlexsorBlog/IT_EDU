@@ -1,18 +1,25 @@
 /* Existing .dialog styles */
 .dialog {
   padding-bottom: 45px;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .dialog .container {
   padding-top: 20px;
-  max-width: 700px;
+  max-width: 1000px;
   max-height: 854px;
   overflow-y: auto;
 }
 
+.dialog .container-form {
+  padding-top: 20px;
+  max-width: 1000px;
+  max-height: 854px;
+  overflow-y: auto;
+  margin: 0 auto;
+}
+
 .answer-wrapper {
-  width: 340px;
   padding: 20px;
   border-radius: 15px 15px 15px 0px;
   background: var(--secondary-background-color);
@@ -25,6 +32,7 @@
   background: var(--tertiary-background-color);
   color: #ffffff;
 }
+
 
 .user-answer-wrapper .answer-image {
   margin-top: 10px;
@@ -272,6 +280,7 @@
 
 .tasks-sidebar {
   padding: 10px;
+  max-width: 600px;
 }
 
 .tasks-sidebar h2 {
@@ -332,4 +341,56 @@
 
 .dialog-wrapper {
   width: 100%;
+}
+
+.toggle-btn {
+  background-color: #007bff; /* Blue background */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 10px; /* Space below the button */
+  font-size: 14px;
+}
+
+.toggle-btn:hover {
+  background-color: #8360A6; /* Darker blue on hover */
+}
+/* Toggle Button Styling */
+.toggle-btn {
+  background-color: var(--secondary-background-color) !important;;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+}
+
+/* When table is hidden – compact button */
+.toggle-btn.collapsed {
+  width: 40px;
+  padding: 8px;
+  font-size: 0;
+  position: relative;
+}
+
+/* Show icon 📋 instead of text when collapsed */
+.toggle-btn.collapsed::after {
+  content: '📋';
+  font-size: 18px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.table-title{
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+min-width: 400px;
 }

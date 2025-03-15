@@ -22,8 +22,11 @@
       <!-- Tasks Section (Left Side) -->
       {% if logged_in and tasks %}
       <aside class="tasks-sidebar">
-        <h2>Поточні завдання</h2>
-        <table class="tasks-table">
+        <div class="table-title"><h2>Поточні завдання</h2>
+        <button id="toggle-tasks-btn" class="toggle-btn expanded">Сховати завдання</button></div>
+        <!-- Toggle Button -->
+
+        <table class="tasks-table" id="tasks-table">
           <thead>
             <tr>
               <th>Курс</th>
@@ -59,12 +62,12 @@
       <main class="main-content">
         {% if not started_chat %}
         <section class="dialog">
-          <div class="container">
+          <div class="container-form">
             <div class="dialog-wrapper" id="chat-container">
               <div class="centered-answer">
                 <div class="start-form">
-                  <p class="answer">Пройди коротке опитування, щоб ми краще розуміли, як тобі допомагати 👇</p>
                   <form method="post" class="survey-form" id="survey-form">
+                    <p class="answer">Пройди коротке опитування, щоб ми краще розуміли, як тобі допомагати 👇</p>
                     <label for="topic">Що ти хочеш вивчити?</label>
                     <input type="text" name="topic" required value="{{ topic or '' }}" placeholder="Наприклад: Теорія ймовірностей" />
                     <label for="level">Оціни свій рівень знань:</label>
@@ -121,5 +124,21 @@
         <p>Hackathon project <span class="bolded">EduBuddy</span></p>
       </div>
     </footer>
+
+    <!-- JavaScript for Toggle Functionality -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggleButton = document.getElementById('toggle-tasks-btn');
+    const tasksTable = document.getElementById('tasks-table');
+
+    toggleButton.addEventListener('click', function () {
+      const isHidden = tasksTable.style.display === 'none';
+
+      tasksTable.style.display = isHidden ? 'table' : 'none';
+      toggleButton.textContent = isHidden ? 'Сховати завдання' : 'Показати завдання';
+    });
+  });
+</script>
+
   </body>
 </html>

@@ -12,6 +12,10 @@ from datetime import datetime, timedelta
 import sqlite3
 from googleapiclient.discovery import build
 import logging
+import requests
+import PyPDF2
+from io import BytesIO
+from docx import Document
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -21,7 +25,7 @@ app = Flask(__name__)
 app.secret_key = "your_secret_key"  # Replace with a secure key
 
 # OpenAI API Key
-openai.api_key = "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"
+openai.api_key = "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"
 
 # Google API Configuration
 CLIENT_SECRETS_FILE = "credentials_google.json"
@@ -31,7 +35,8 @@ SCOPES = [
     'https://www.googleapis.com/auth/userinfo.profile',
     'https://www.googleapis.com/auth/classroom.courses.readonly',
     'https://www.googleapis.com/auth/classroom.student-submissions.me.readonly',
-    'https://www.googleapis.com/auth/classroom.coursework.students.readonly'
+    'https://www.googleapis.com/auth/classroom.coursework.students.readonly',
+    'https://www.googleapis.com/auth/drive.readonly'
 ]
 
 # Allow insecure transport for local testing (remove in production)
@@ -54,7 +59,6 @@ def init_db():
                 scopes TEXT
             )
         """)
-        # Drop and recreate chat_history with ON DELETE CASCADE
         c.execute("DROP TABLE IF EXISTS chat_history")
         c.execute("""
             CREATE TABLE chat_history (
@@ -121,7 +125,7 @@ def get_credentials():
 def load_chat_history(user_id):
     with sqlite3.connect("users.db") as conn:
         c = conn.cursor()
-        c.execute("SELECT role, content FROM chat_history WHERE user_id = ? ORDER BY timestamp", (user_id,))
+        c.execute("  SELECT role, content FROM chat_history WHERE user_id = ? ORDER BY timestamp", (user_id,))
         return [{"role": row[0], "content": row[1]} for row in c.fetchall()]
 
 # Save chat message to database
@@ -185,6 +189,63 @@ def oauth2callback():
     session['logged_in'] = True
     return redirect(url_for('index'))
 
+# Fetch task details including file content
+def get_task_details(credentials, course_id, coursework_id):
+    service = googleapiclient.discovery.build('classroom', 'v1', credentials=credentials)
+    drive_service = googleapiclient.discovery.build('drive', 'v3', credentials=credentials)
+    coursework = service.courses().courseWork().get(courseId=course_id, id=coursework_id).execute()
+    materials = coursework.get('materials', [])
+    description = coursework.get('description', '')
+    title = coursework.get('title', '')
+    task_context = f"Task: {title}\nDescription: {description}\nMaterials: "
+
+    for material in materials:
+        if 'link' in material:
+            task_context += f"Link: {material['link']['url']}, "
+        elif 'driveFile' in material:
+            file_id = material['driveFile']['driveFile']['id']
+            try:
+                file_metadata = drive_service.files().get(fileId=file_id, fields='mimeType').execute()
+                mime_type = file_metadata.get('mimeType', 'Unknown MIME type')
+                content = ""
+
+                print(f"Fetching file: {file_id}, MIME type: {mime_type}")
+
+                if mime_type == 'application/vnd.google-apps.document':
+                    # Google Docs: Export as plain text
+                    content = drive_service.files().export(fileId=file_id, mimeType='text/plain').execute().decode('utf-8')
+                elif mime_type == 'application/pdf':
+                    # PDFs: Download and extract text
+                    request = drive_service.files().get_media(fileId=file_id)
+                    file_data = request.execute()
+                    pdf_file = BytesIO(file_data)
+                    pdf_reader = PyPDF2.PdfReader(pdf_file)
+                    content = ""
+                    for page in pdf_reader.pages:
+                        content += page.extract_text() or ""
+                elif mime_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                    # .docx: Download and extract text
+                    request = drive_service.files().get_media(fileId=file_id)
+                    file_data = request.execute()
+                    docx_file = BytesIO(file_data)
+                    doc = Document(docx_file)
+                    content = "\n".join([para.text for para in doc.paragraphs])
+                else:
+                    content = f"Unsupported file type: {mime_type}"
+
+                # Print file content to console for debugging
+                print(f"File Content for {file_id} ({mime_type}): {content}")
+
+                # Truncate content to 4000 characters
+                if len(content) > 4000:
+                    content = content[:4000] + " [Content truncated due to length]"
+                task_context += f"File Content: {content}, "
+            except Exception as e:
+                print(f"Error fetching file {file_id}: {str(e)}")
+                task_context += f"File Error: {str(e)}, "
+
+    return task_context.strip(', ')
+
 # Main route
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -242,7 +303,9 @@ def index():
                                 'course': course_name,
                                 'title': assignment['title'],
                                 'due': due.strftime('%Y-%m-%d'),
-                                'state': 'Пропущено' if due < today else 'Очікує'
+                                'state': 'Пропущено' if due < today else 'Очікує',
+                                'course_id': course_id,
+                                'coursework_id': assignment['id']
                             })
 
             session["tasks"] = tasks
@@ -252,14 +315,35 @@ def index():
             session["tasks"] = [{'course': 'Помилка', 'title': f"Виникла помилка: {error}", 'due': '', 'state': ''}]
             session.modified = True
 
+    selected_task_index = session.get('selected_task_index')
+    task_context = None
+    if selected_task_index is not None and 0 <= selected_task_index < len(session["tasks"]):
+        print(session["tasks"])
+        task = session["tasks"][selected_task_index]
+        try:
+            print(task)
+            task_context = get_task_details(credentials, task['course_id'], task['coursework_id'])
+        except Exception as e:
+            task_context = f"Error fetching task details: {str(e)}"
+
     if request.method == "POST":
         if "chat" in request.form:
             question = request.form.get("question")
             if user_id:
                 save_chat_message(user_id, "user", question)
             session["chat_history"].append({"role": "user", "content": question})
+            system_prompt = (
+                "Ти – AI-помічник у навчанні. Твоя мета – допомагати користувачу зрозуміти завдання і вчитися самостійно. "
+                "Не давай повних розв’язків чи готових відповідей "
+                "Замість цього надавай підказки, пояснення, приклади підходів, проте можеш показувати приклади розв'язку чи пояснень"
+            )
+            if task_context:
+                print(task_context)
+                system_prompt += (
+                    "Використовуй контекст лише для надання релевантних підказок, не розв’язуй завдання за користувача." + f"\nКонтекст завдання:\n{task_context}\n(це завдання з класруму студента котрий задає питання)"
+                )
             full_context = [
-                {"role": "system", "content": "Ти – AI-помічник у навчанні. Не давай готових відповідей, лише допомагай користувачу вчитись самостійно через пояснення, матеріали, ресурси, ідеї та підтримку. Відповідай коротко і просто"},
+                {"role": "system", "content": system_prompt},
                 *session["chat_history"]
             ]
             try:
@@ -275,6 +359,13 @@ def index():
                 session.modified = True
             except Exception as e:
                 assistant_reply = f"Сталася помилка: {str(e)}"
+        elif "select_task" in request.form:
+            selected_task_index = int(request.form.get("task_index"))
+            session['selected_task_index'] = selected_task_index
+            session.modified = True
+        elif "deselect_task" in request.form:  # New action to deselect
+            session['selected_task_index'] = None
+            session.modified = True
         else:
             topic = request.form.get("topic")
             level = request.form.get("level")
@@ -312,7 +403,8 @@ def index():
         started_chat=session.get("started_chat", False),
         assistant_reply=assistant_reply,
         tasks=session.get("tasks", []),
-        logged_in=credentials is not None
+        logged_in=credentials is not None,
+        selected_task_index=selected_task_index
     )
 
 # Remove task
@@ -320,6 +412,8 @@ def index():
 def remove_task(task_index):
     if "tasks" in session and 0 <= task_index < len(session["tasks"]):
         session["tasks"].pop(task_index)
+        if session.get('selected_task_index') == task_index:
+            session.pop('selected_task_index')
         session.modified = True
     return redirect(url_for("index"))
 

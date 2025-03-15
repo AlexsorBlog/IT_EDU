@@ -59,6 +59,40 @@
   overflow-y: auto;
 }
 
+.page-header {
+
+    padding: 10px 0;
+}
+
+.page-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.page-header .container a[href="/"] {
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+
+}
+
+.login-btn, .logout-btn {
+    text-decoration: none;
+
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 4px;
+
+}
+
+.login-btn:hover, .logout-btn:hover {
+
+    text-decoration: none;
+}
+
 /* Image styling for answers */
 .answer-image {
   margin-bottom: 11px;
@@ -273,7 +307,7 @@
 
 .page-layout {
   display: flex;
-  margin-top: 40px;
+  margin-top: 20px;
   flex-direction: row;
   min-height: calc(100vh - 100px);
 }

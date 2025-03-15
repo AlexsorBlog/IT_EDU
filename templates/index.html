@@ -22,10 +22,10 @@
       <!-- Tasks Section (Left Side) -->
       {% if logged_in and tasks %}
       <aside class="tasks-sidebar">
-        <div class="table-title"><h2>Поточні завдання</h2>
-        <button id="toggle-tasks-btn" class="toggle-btn expanded">Сховати завдання</button></div>
-        <!-- Toggle Button -->
-
+        <div class="table-title">
+          <h2>Поточні завдання</h2>
+          <button id="toggle-tasks-btn" class="toggle-btn expanded">Сховати завдання</button>
+        </div>
         <table class="tasks-table" id="tasks-table">
           <thead>
             <tr>
@@ -38,7 +38,7 @@
           </thead>
           <tbody>
             {% for task in tasks %}
-            <tr>
+            <tr {% if loop.index0 == selected_task_index %}class="selected-task"{% endif %}>
               <td>{{ task.course }}</td>
               <td>{{ task.title }}</td>
               <td>{{ task.due }}</td>
@@ -50,6 +50,16 @@
                 <form method="post" action="{{ url_for('remove_task', task_index=loop.index0) }}" style="display:inline;">
                   <button type="submit" class="action-btn remove-btn">✗</button>
                 </form>
+                <form method="post" style="display:inline;">
+                  {% if loop.index0 == selected_task_index %}
+                    <input type="hidden" name="deselect_task" value="1" />
+                    <button type="submit" class="action-btn deselect-btn">Скасувати</button>
+                  {% else %}
+                    <input type="hidden" name="select_task" value="1" />
+                    <input type="hidden" name="task_index" value="{{ loop.index0 }}" />
+                    <button type="submit" class="action-btn select-btn">Вибрати</button>
+                  {% endif %}
+                </form>
               </td>
             </tr>
             {% endfor %}
@@ -58,7 +68,7 @@
       </aside>
       {% endif %}
 
-      <!-- Main Content -->
+      <!-- Main Content (unchanged) -->
       <main class="main-content">
         {% if not started_chat %}
         <section class="dialog">
@@ -126,19 +136,17 @@
     </footer>
 
     <!-- JavaScript for Toggle Functionality -->
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const toggleButton = document.getElementById('toggle-tasks-btn');
-    const tasksTable = document.getElementById('tasks-table');
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const toggleButton = document.getElementById('toggle-tasks-btn');
+        const tasksTable = document.getElementById('tasks-table');
 
-    toggleButton.addEventListener('click', function () {
-      const isHidden = tasksTable.style.display === 'none';
-
-      tasksTable.style.display = isHidden ? 'table' : 'none';
-      toggleButton.textContent = isHidden ? 'Сховати завдання' : 'Показати завдання';
-    });
-  });
-</script>
-
+        toggleButton.addEventListener('click', function () {
+          const isHidden = tasksTable.style.display === 'none';
+          tasksTable.style.display = isHidden ? 'table' : 'none';
+          toggleButton.textContent = isHidden ? 'Сховати завдання' : 'Показати завдання';
+        });
+      });
+    </script>
   </body>
 </html>

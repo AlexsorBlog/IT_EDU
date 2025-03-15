@@ -26,45 +26,47 @@
           <h2>Поточні завдання</h2>
           <button id="toggle-tasks-btn" class="toggle-btn expanded">Сховати завдання</button>
         </div>
-        <table class="tasks-table" id="tasks-table">
-          <thead>
-            <tr>
-              <th>Курс</th>
-              <th>Завдання</th>
-              <th>Дата</th>
-              <th>Статус</th>
-              <th>Дії</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for task in tasks %}
-            <tr {% if loop.index0 == selected_task_index %}class="selected-task"{% endif %}>
-              <td>{{ task.course }}</td>
-              <td>{{ task.title }}</td>
-              <td>{{ task.due }}</td>
-              <td>{{ task.state }}</td>
-              <td>
-                <form method="post" action="{{ url_for('complete_task', task_index=loop.index0) }}" style="display:inline;">
-                  <button type="submit" class="action-btn complete-btn" {% if task.state == 'Виконано' %}disabled{% endif %}>✓</button>
-                </form>
-                <form method="post" action="{{ url_for('remove_task', task_index=loop.index0) }}" style="display:inline;">
-                  <button type="submit" class="action-btn remove-btn">✗</button>
-                </form>
-                <form method="post" style="display:inline;">
-                  {% if loop.index0 == selected_task_index %}
-                    <input type="hidden" name="deselect_task" value="1" />
-                    <button type="submit" class="action-btn deselect-btn">Скасувати</button>
-                  {% else %}
-                    <input type="hidden" name="select_task" value="1" />
-                    <input type="hidden" name="task_index" value="{{ loop.index0 }}" />
-                    <button type="submit" class="action-btn select-btn">Вибрати</button>
-                  {% endif %}
-                </form>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="tasks-table-wrapper" id="tasks-table-wrapper">
+          <table class="tasks-table" id="tasks-table">
+            <thead>
+              <tr>
+                <th>Курс</th>
+                <th>Завдання</th>
+                <th>Дата</th>
+                <th>Статус</th>
+                <th>Дії</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for task in tasks %}
+              <tr {% if loop.index0 == selected_task_index %}class="selected-task"{% endif %}>
+                <td>{{ task.course }}</td>
+                <td>{{ task.title }}</td>
+                <td>{{ task.due }}</td>
+                <td>{{ task.state }}</td>
+                <td>
+                  <form method="post" action="{{ url_for('complete_task', task_index=loop.index0) }}" style="display:inline;">
+                    <button type="submit" class="action-btn complete-btn" {% if task.state == 'Виконано' %}disabled{% endif %}>✓</button>
+                  </form>
+                  <form method="post" action="{{ url_for('remove_task', task_index=loop.index0) }}" style="display:inline;">
+                    <button type="submit" class="action-btn remove-btn">✗</button>
+                  </form>
+                  <form method="post" style="display:inline;">
+                    {% if loop.index0 == selected_task_index %}
+                      <input type="hidden" name="deselect_task" value="1" />
+                      <button type="submit" class="action-btn deselect-btn">Скасувати</button>
+                    {% else %}
+                      <input type="hidden" name="select_task" value="1" />
+                      <input type="hidden" name="task_index" value="{{ loop.index0 }}" />
+                      <button type="submit" class="action-btn select-btn">Вибрати</button>
+                    {% endif %}
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </aside>
       {% endif %}
 
@@ -93,6 +95,8 @@
             </div>
           </div>
         </section>
+        <img src="{{ url_for('static', filename='images/1.png') }}" alt="Decoration" class="bottom-right-image" />
+        <img src="{{ url_for('static', filename='images/2.png') }}" alt="Decoration" class="bottom-left-image" />
         {% else %}
         <section class="dialog">
           <div class="container">
@@ -135,18 +139,47 @@
       </div>
     </footer>
 
-    <!-- JavaScript for Toggle Functionality -->
+
+    <!-- JavaScript for Toggle Animation -->
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         const toggleButton = document.getElementById('toggle-tasks-btn');
-        const tasksTable = document.getElementById('tasks-table');
+        const tableWrapper = document.getElementById('tasks-table-wrapper');
 
         toggleButton.addEventListener('click', function () {
-          const isHidden = tasksTable.style.display === 'none';
-          tasksTable.style.display = isHidden ? 'table' : 'none';
-          toggleButton.textContent = isHidden ? 'Сховати завдання' : 'Показати завдання';
+          tableWrapper.classList.toggle('hidden');
+
+          if (tableWrapper.classList.contains('hidden')) {
+            toggleButton.textContent = 'Показати завдання';
+          } else {
+            toggleButton.textContent = 'Сховати завдання';
+          }
         });
       });
+      document.addEventListener("DOMContentLoaded", function () {
+    const overlay = document.getElementById("overlay");
+
+    // Attach to all form submits
+    const forms = document.querySelectorAll("form");
+    forms.forEach(form => {
+      form.addEventListener("submit", function () {
+        overlay.classList.add("active");
+      });
+    });
+  });
     </script>
+
+    <!-- Inline CSS for Animation -->
+    <style>
+      .tasks-table-wrapper {
+        max-height: 1500px; /* Adjust this value based on your table's max height */
+        overflow: hidden;
+        transition: max-height 0.5s ease-in-out; /* Smooth animation */
+      }
+
+      .tasks-table-wrapper.hidden {
+        max-height: 0;
+      }
+    </style>
   </body>
 </html>

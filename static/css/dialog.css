@@ -9,6 +9,7 @@
   max-width: 1000px;
   max-height: 854px;
   overflow-y: auto;
+  margin: 0 auto;
 }
 
 .dialog .container-form {
@@ -271,10 +272,31 @@
   text-align: center;
 }
 
+.bottom-right-image {
+  position: fixed; /* Фіксоване позиціонування відносно вікна браузера */
+  bottom: 20px; /* Відступ знизу */
+  right: 20px; /* Відступ справа */
+  width: 300px; /* Ширина зображення (налаштуйте за потребою) */
+  height: auto; /* Висота пропорційна */
+  z-index: 1000; /* Щоб зображення було над іншими елементами */
+}
+
+.bottom-left-image {
+  position: fixed; /* Фіксоване позиціонування відносно вікна браузера */
+  bottom: 100px; /* Відступ знизу */
+  left: 20px; /* Відступ справа */
+  width: 300px; /* Ширина зображення (налаштуйте за потребою) */
+  height: auto; /* Висота пропорційна */
+  z-index: 1000; /* Щоб зображення було над іншими елементами */
+}
+
 /* Other minor tweaks for layout */
 .dialog-wrapper {
   display: flex;
   flex-direction: column;
+  background: rgba(44, 16, 71, 0.3);
+  border-radius:40px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Style for assistant messages (left side, light grey background) */
@@ -314,8 +336,42 @@
 
 .tasks-sidebar {
   padding: 10px;
-  max-width: 600px;
+  max-width: 750px;
 }
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .overlay.active {
+    display: flex;
+  }
+
+  /* Loader spinner */
+  .loader {
+    border: 6px solid #ccc;
+    border-top: 6px solid #fff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+
+.tasks-table { border: 5px solid var(--secondary-background-color) !important;
+border-radius: 30px;}
 
 .tasks-sidebar h2 {
   font-size: 1.2em;
@@ -324,12 +380,10 @@
 
 .tasks-table {
   width: 100%;
-  border-collapse: collapse;
   font-size: 0.9em;
 }
 
 .tasks-table th, .tasks-table td {
-  border: 1px solid #ddd;
   padding: 6px;
   text-align: left;
 }
@@ -428,3 +482,99 @@ flex-direction: row;
 justify-content: space-between;
 min-width: 400px;
 }
+
+.tasks-table {
+    width: 100%;
+    margin: 20px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  .tasks-table thead {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .tasks-table th,
+  .tasks-table td {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 15px;
+    border-bottom: 1px solid #777; /* Gray lines */
+    color: #f1f1f1;
+  }
+
+  .tasks-table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tasks-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+
+
+
+  .tasks-table .selected-task {
+    background-color: #5B2393;
+    border-left: 4px solid #4caf50;
+  }
+
+  .action-btn {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 12px;
+    margin: 6px 4px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+    color: #fff;
+  }
+
+  .action-btn:hover {
+    border-color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .complete-btn {
+    color: #4caf50;
+    border-color: #4caf50;
+  }
+
+  .complete-btn:hover {
+    background-color: rgba(76, 175, 80, 0.1);
+  }
+
+  .complete-btn:disabled {
+    opacity: 0.5;
+    border-color: #4caf50;
+    cursor: not-allowed;
+  }
+
+  .remove-btn {
+    color: #f44336;
+    border-color: #f44336;
+  }
+
+  .remove-btn:hover {
+    background-color: rgba(244, 67, 54, 0.1);
+  }
+
+  .select-btn {
+    color: #2196f3;
+    border-color: #2196f3;
+  }
+
+  .select-btn:hover {
+    background-color: rgba(33, 150, 243, 0.1);
+  }
+
+  .deselect-btn {
+    color: #aaa;
+    border-color: #aaa;
+  }
+
+  .deselect-btn:hover {
+    background-color: rgba(200, 200, 200, 0.1);
+  }
